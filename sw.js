@@ -1,5 +1,5 @@
-const CACHE_NAME = 'eskisehir-ulasim-shell-v11-final';
-const SHELL = ['/', '/index.html', '/styles.css?v=ios-clean-1', '/ios.css?v=5', '/app.js?v=clean-1', '/map.js?v=tiles-visible-2', '/journey.js', '/manifest.webmanifest', '/icon.svg', '/apple-touch-icon.png', '/icon-192.png', '/icon-512.png'];
+const CACHE_NAME = 'eskisehir-ulasim-shell-v12-vercel';
+const SHELL = ['/', '/index.html', '/styles.css?v=ios-clean-1', '/ios.css?v=5', '/app.js?v=clean-2', '/map.js', '/journey.js', '/manifest.webmanifest', '/icon.svg', '/apple-touch-icon.png', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(SHELL)).then(() => self.skipWaiting()));

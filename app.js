@@ -866,7 +866,7 @@ async function init() {
     setStatus('Durak verisi hazır', 'ready');
     render();
     try {
-      const { createTransitMap } = await import('./map.js?v=tiles-visible-2');
+      const { createTransitMap } = await import('./map.js');
       state.map = createTransitMap({ element: $('#transit-map'), stops: state.stops, onSelectStop: selectStop, onPickPoint: handleMapPoint });
       syncMap();
       const params = new URLSearchParams(location.search);
