@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#103b70">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Otobüsüm">
+    <meta name="description" content="Eskişehir otobüs duraklarını bulun, geliş tahminlerini kolayca görün.">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+    <link rel="stylesheet" href="/styles.css?v=ios-clean-1">
+    <link rel="stylesheet" href="/ios.css?v=5">
+    <title>Eskişehir Otobüsüm</title>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Eskişehir Otobüsüm ana sayfa">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 40 40" focusable="false"><path d="M10 9.5A4.5 4.5 0 0 1 14.5 5h11A4.5 4.5 0 0 1 30 9.5v19a2 2 0 0 1-2 2h-1.2a3.3 3.3 0 0 1-6.2 0h-1.2a3.3 3.3 0 0 1-6.2 0H12a2 2 0 0 1-2-2zM13 10v9h14v-9a1.5 1.5 0 0 0-1.5-1.5h-11A1.5 1.5 0 0 0 13 10zm1.5 13a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm11 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg>
+          </span>
+          <span class="brand-copy"><strong>Otobüsüm</strong><span>Eskişehir</span></span>
+        </a>
+        <div class="service-status" id="service-status" role="status" aria-live="polite">
+          <span class="status-dot" aria-hidden="true"></span><span id="status-text">Bilgiler alınıyor</span>
+        </div>
+      </header>
+
+      <main id="main-content" tabindex="-1">
+        <section class="welcome" aria-labelledby="welcome-title">
+          <p class="eyebrow">Eskişehir'de ulaşım</p>
+          <h1 id="welcome-title">Otobüsünüzü<br>kolayca bulun.</h1>
+          <p class="intro">Durak numarasını ya da hat adını yazın. Yakındaki durakları da bulabiliriz.</p>
+        </section>
+
+        <section class="finder" aria-label="Durak veya hat bul">
+          <label class="search-label" for="search-input">Durak veya hat numarası</label>
+          <div class="search-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.4"></circle><path d="m16 16 4.2 4.2"></path></svg>
+            <input id="search-input" type="search" inputmode="search" autocomplete="off" placeholder="Örnek: 114 durağı veya 20S hattı" aria-describedby="search-help">
+            <button class="clear-search" id="clear-search" type="button" aria-label="Aramayı temizle" hidden>×</button>
+          </div>
+          <p id="search-help" class="field-help">Durak numarasını veya hat adını yazabilirsiniz.</p>
+          <button class="location-button" id="location-button" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z"></path><circle cx="12" cy="9" r="2.5"></circle></svg>
+            <span>Yakınımdaki durakları bul</span>
+          </button>
+        </section>
+
+        <section class="map-section" id="map-section" aria-labelledby="map-title">
+          <div class="map-heading">
+            <div class="map-heading-copy"><h2 id="map-title">Eskişehir haritası</h2><p id="map-selection-status">Durakları seçin ya da yol tarifi bölümünden haritadan yer belirleyin.</p></div>
+            <button class="map-filter-button" id="map-favorites-toggle" type="button" aria-pressed="false">Favori duraklar</button>
+          </div>
+          <div class="map-controls">
+            <label class="visually-hidden" for="route-select">Otobüs hattı seçin</label>
+            <select id="route-select" aria-label="Haritada otobüs hattı seçin"><option value="">Otobüs hattı seçin</option></select>
+            <button class="clear-route-button" id="clear-route" type="button" hidden>Hat seçimini kaldır</button>
+          </div>
+          <div id="transit-map" aria-label="Eskişehir otobüs durakları haritası"></div>
+          <p class="map-caption"><span class="map-legend-stop" aria-hidden="true"></span> Durak <span class="map-legend-route" aria-hidden="true"></span> Seçili hat <span class="map-legend-point map-legend-origin" aria-hidden="true">A</span> Başlangıç <span class="map-legend-point map-legend-destination" aria-hidden="true">B</span> Varış. Harita © OpenStreetMap katkıda bulunanlar.</p>
+        </section>
+
+        <section class="journey-section" aria-labelledby="journey-title">
+          <div class="journey-title"><h2 id="journey-title">Otobüsle yol tarifi</h2><p>Haritada varış yerini seçin; en uygun durak ve hatları bulalım.</p></div>
+          <div class="journey-points">
+            <p><strong>Nereden?</strong><span id="journey-origin">Konumunuzu kullanın ya da haritadan başlangıç seçin.</span></p>
+            <p><strong>Nereye?</strong><span id="journey-destination">Haritada gitmek istediğiniz yere dokunun.</span></p>
+          </div>
+          <div class="journey-actions">
+            <button class="journey-origin-button" id="pick-origin" type="button" aria-pressed="false">Başlangıç yerini haritadan seç</button>
+            <button class="journey-origin-button" id="pick-destination" type="button" aria-pressed="false">Varış yerini haritadan seç</button>
+            <button class="journey-submit" id="plan-journey" type="button" disabled>Buraya nasıl giderim?</button>
+          </div>
+          <p class="journey-help" id="journey-help" role="status" aria-live="polite">Yakındaki durakları bulmak için konum izni verebilir ya da başlangıç yerinizi haritada seçebilirsiniz.</p>
+          <div id="journey-results" aria-live="polite"></div>
+        </section>
+
+        <section class="results-section" id="results-section" aria-live="polite" aria-label="Arama sonuçları"></section>
+        <section class="panel-section" id="panel-section" aria-live="polite"></section>
+        <p class="data-note" id="data-note">Geliş saatleri Wialon NimBus paylaşımından alınır. Tahmin yoksa tarifedeki saat gösterilir.</p>
+      </main>
+
+      <footer class="footer">
+        <span>Eskişehir Otobüsüm</span>
+        <button id="text-size-button" class="text-size-button" type="button" aria-pressed="false">Yazıyı büyüt</button>
+      </footer>
+    </div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <nav class="app-tabs" id="app-tabs" aria-label="Ana gezinme">
+      <button type="button" class="app-tab is-active" data-tab="map" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5 8.5 4l7 2.5L21 4v13.5L15.5 20l-7-2.5L3 20zM8.5 4v13.5m7-11V20"></path></svg><span>Harita</span></button>
+      <button type="button" class="app-tab" data-tab="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.4"></circle><path d="m16 16 4.2 4.2"></path></svg><span>Ara</span></button>
+      <button type="button" class="app-tab" data-tab="favorites"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z"></path></svg><span>Favori</span></button>
+      <button type="button" class="app-tab" data-tab="journey"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="18" r="2.3"></circle><circle cx="18" cy="6" r="2.3"></circle><path d="M8.5 18h4a4 4 0 0 0 4-4V8.5M10 6h3"></path></svg><span>Rota</span></button>
+    </nav>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script type="module" src="/app.js?v=clean-1"></script>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+/* iPhone/iPad standalone: keep the map as the app canvas, with native-feeling controls around it. */
+@media (max-width: 700px) {
+  .service-status { display: none !important; }
+  .map-heading { display: none !important; }
+  .map-caption { display: none !important; }
+  .map-controls { top: calc(env(safe-area-inset-top) + 126px) !important; }
+  #transit-map { height: 100dvh !important; min-height: 100dvh !important; max-height: none !important; }
+}
