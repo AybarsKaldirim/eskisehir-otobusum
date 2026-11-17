@@ -1,5 +1,21 @@
 import { nearestStops, planJourneys } from './journey.js';
 
+// Initialize Vercel Web Analytics
+(function() {
+  // Initialize the analytics queue
+  if (!window.va) {
+    window.va = function() {
+      (window.vaq = window.vaq || []).push(arguments);
+    };
+  }
+  
+  // Inject the analytics script
+  const script = document.createElement('script');
+  script.src = '/_vercel/insights/script.js';
+  script.defer = true;
+  document.head.appendChild(script);
+})();
+
 const LOCATOR_HASH = '4d5af2578d1f42adabc3165aa4456953';
 const API_ROOT = `https://nimbus.wialon.com/api/locator/${LOCATOR_HASH}`;
 const REFRESH_MS = 30_000;

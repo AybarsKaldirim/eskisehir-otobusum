@@ -5,5 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "node server.mjs"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
   }
 }
